@@ -1,24 +1,24 @@
 const express = require('express');
-const { createProxyMiddleware, responseInterceptor } = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const os = require('os');
 
 const app = express();
 const PORT = 31401;
 
-// Ambil IP address publik VPS secara otomatis
-function getPublicIP() {
+// Ambil IP lokal server otomatis
+function getServerIp() {
   const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]) {
+  for (let name in interfaces) {
+    for (let iface of interfaces[name]) {
       if (iface.family === 'IPv4' && !iface.internal) {
         return iface.address;
       }
     }
   }
-  return 'localhost'; // fallback
+  return 'localhost';
 }
 
-const SERVER_IP = getPublicIP();
+const SERVER_IP = getServerIp();
 const SERVER_URL = `http://${SERVER_IP}:${PORT}`;
 
 app.use(
@@ -26,30 +26,36 @@ app.use(
   createProxyMiddleware({
     target: 'https://api.mainnet.minepi.com',
     changeOrigin: true,
-    selfHandleResponse: true,
-    secure: true,
-    pathRewrite: {
-      '^/': '/',
-    },
-    onProxyReq: (proxyReq, req, res) => {
-      proxyReq.setHeader('X-Forwarded-For', req.ip);
-    },
-    onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-      const contentType = proxyRes.headers['content-type'] || '';
-      const isJson = contentType.includes('application/json');
+    selfHandleResponse: true, // ini penting!
+    onProxyRes: async (proxyRes, req, res) => {
+      let body = Buffer.from([]);
 
-      if (isJson) {
-        const originalBody = responseBuffer.toString('utf8');
-        // Replace all links to api.mainnet.minepi.com with your server IP
-        const replacedBody = originalBody.replace(/https:\/\/api\.mainnet\.minepi\.com/g, SERVER_URL);
-        return replacedBody;
-      }
+      proxyRes.on('data', chunk => {
+        body = Buffer.concat([body, chunk]);
+      });
 
-      return responseBuffer;
-    }),
+      proxyRes.on('end', () => {
+        const contentType = proxyRes.headers['content-type'] || '';
+        const statusCode = proxyRes.statusCode;
+
+        // Salin semua header
+        Object.entries(proxyRes.headers).forEach(([key, value]) => {
+          res.setHeader(key, value);
+        });
+
+        if (contentType.includes('application/json') || contentType.includes('text/')) {
+          const original = body.toString('utf8');
+          const modified = original.replace(/https:\/\/api\.mainnet\.minepi\.com/g, SERVER_URL);
+          res.status(statusCode).send(modified);
+        } else {
+          // Jika bukan JSON atau text, kirim apa adanya
+          res.status(statusCode).send(body);
+        }
+      });
+    },
   })
 );
 
 app.listen(PORT, () => {
-  console.log(`Proxy aktif di ${SERVER_URL}`);
+  console.log(`✅ Proxy aktif di ${SERVER_URL}`);
 });

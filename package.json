@@ -1,14 +1,15 @@
 {
-  "name": "pi-proxy",
+  "name": "pi-proxy-server",
   "version": "1.0.0",
-  "description": "Reverse proxy for Pi Network API using VPS IP",
+  "description": "Reverse proxy untuk mengakses api.mainnet.minepi.com melalui IP VPS",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "author": "ZendsDev",
+  "license": "MIT",
   "dependencies": {
-    "http-proxy": "^1.18.1"
-  },
-  "author": "ZendsHost",
-  "license": "MIT"
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
+  }
 }

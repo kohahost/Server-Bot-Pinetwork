@@ -1,3 +1,13 @@
+Cara Instal Modul Nya Buka terminal vps/server anda dan paste
+
+npm install express http-proxy-middleware axios
+
+jika sudah selesai proses instalasi upload sc kalian
+dan jalankan pm2 start index.js
+jika belum instal pm2 silahkan instal dulu cara nya
+npm install pm2 -g
+dan jalankan pm2 start index.js
+
 ✅ MANFAATNYA
 1. MENGHINDARI RATE LIMIT dari API api.mainnet.minepi.com
 Karena kamu akses API melalui IP VPS kamu, maka IP client asli tidak langsung berinteraksi dengan API Pi.

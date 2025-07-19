@@ -1,0 +1,41 @@
+✅ MANFAATNYA
+1. MENGHINDARI RATE LIMIT dari API api.mainnet.minepi.com
+Karena kamu akses API melalui IP VPS kamu, maka IP client asli tidak langsung berinteraksi dengan API Pi.
+Artinya, kamu bisa:
+Menggunakan banyak VPS dengan IP berbeda.
+Membagi traffic agar tidak kena batasan permintaan (rate limit).
+2. MENYEMBUNYIKAN API SEBENARNYA dari client
+Respon API yang aslinya seperti: "href": "https://api.mainnet.minepi.com/accounts/..."
+akan diubah otomatis menjadi: "href": "http://202.50.26.84:31401/accounts/..."
+Jadi, client tidak tahu kamu sedang proxy ke api.mainnet.minepi.com.
+
+⚙️ CARA KERJANYA
+Client (user, script, bot)
+        ↓
+   http://IP_VPS:31401
+        ↓
+[Reverse Proxy VPS kamu (Express.js + Proxy Middleware)]
+        ↓
+Forward ke → https://api.mainnet.minepi.com
+        ↓
+Ambil respon dari Pi API
+        ↓
+Ubah semua link di JSON response jadi → IP VPS kamu
+        ↓
+Kirim ke client
+
+📌 CONTOH KASUS
+Misal kamu punya bot/klien yang akses ini:
+http://202.50.26.84:31401/claimable_balances?claimant=GCQ...&limit=1
+
+VPS kamu menerima request.
+Diteruskan ke https://api.mainnet.minepi.com/claimable_balances?...
+Pi API merespons JSON (berisi banyak link https://api.mainnet.minepi.com/...)
+Server kamu ubah semua link jadi http://202.50.26.84:31401/...
+Baru JSON dikirim balik ke klien.
+
+jadi kalau kamu mau banyak server dalam gampang banget tinggal sewa vps 5/10 dan bisa di manfatkan untuk ganti ganti wk
+Semoga Bermanfaat Ngab:v
+Join Channel Saya: https://t.me/masterwebstore
+
+                       

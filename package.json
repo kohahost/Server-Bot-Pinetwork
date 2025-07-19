@@ -1,0 +1,14 @@
+{
+  "name": "pi-proxy",
+  "version": "1.0.0",
+  "description": "Reverse proxy for Pi Network API using VPS IP",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1"
+  },
+  "author": "ZendsHost",
+  "license": "MIT"
+}

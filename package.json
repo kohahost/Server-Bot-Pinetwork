@@ -1,7 +1,7 @@
 {
   "name": "pi-proxy-server",
   "version": "1.0.0",
-  "description": "Reverse proxy untuk Pi Network API dengan IP VPS",
+  "description": "Reverse proxy for Pi Network API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
